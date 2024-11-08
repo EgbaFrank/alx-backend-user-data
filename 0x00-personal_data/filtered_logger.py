@@ -2,8 +2,13 @@
 """
 replace a string with a given redaction string
 """
+from os import getenv
 import re
 from typing import List
+import logging
+import mysql.connector
+
+PII_FIELDS = ("name", "email", "ssn", "phone", "password")
 
 
 def filter_datum(
@@ -17,3 +22,72 @@ def filter_datum(
         message = re.sub(
             f"{field}=[^{separator}]*", f"{field}={redaction}", message)
     return message
+
+
+class RedactingFormatter(logging.Formatter):
+    """ Redacting Formatter class
+    """
+
+    REDACTION = "***"
+    FORMAT = "[HOLBERTON] %(name)s %(levelname)s %(asctime)-15s: %(message)s"
+    SEPARATOR = ";"
+
+    def __init__(self, fields):
+        super(RedactingFormatter, self).__init__(self.FORMAT)
+        self.fields = fields
+
+    def format(self, record: logging.LogRecord) -> str:
+        original_message = super().format(record)
+        return filter_datum(
+                self.fields, self.REDACTION,
+                original_message, self.SEPARATOR)
+
+
+def get_logger() -> logging.Logger:
+    """returns a logging.Logger object"""
+    logger = logging.getLogger("user_data")
+    logger.setLevel(logging.INFO)
+
+    handler = logging.StreamHandler()
+    formatter = RedactingFormatter(fields=PII_FIELDS)
+
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+
+    return logger
+
+
+def get_db() -> mysql.connector.connection.MySQLConnection:
+    """returns a connector to the database"""
+    connection = mysql.connector.connect(
+        host=getenv("PERSONAL_DATA_DB_HOST", "localhost"),
+        user=getenv("PERSONAL_DATA_DB_USERNAME", "root"),
+        password=getenv("PERSONAL_DATA_DB_PASSWORD", ""),
+        database=getenv("PERSONAL_DATA_DB_NAME")
+    )
+    return connection
+
+
+def main() -> None:
+    """display redacted format of all rows in the users table
+    """
+    logger = get_logger()
+
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM users;")
+    column_names = [desc[0] for desc in cursor.description]
+
+    for row in cursor:
+        row_data = "; ".join([
+            f"{col}={val}" for col, val
+            in zip(column_names, row)
+        ])
+        logger.info(row_data)
+
+    cursor.close()
+    db.close()
+
+
+if __name__ == "__main__":
+    main()
