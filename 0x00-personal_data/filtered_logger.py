@@ -2,7 +2,7 @@
 """
 replace a string with a given redaction string
 """
-from os import getenv
+import os
 import re
 from typing import List
 import logging
@@ -62,10 +62,10 @@ def get_logger() -> logging.Logger:
 def get_db() -> mysql.connector.connection.MySQLConnection:
     """returns a connector to the database"""
     connection = mysql.connector.connect(
-        host=getenv("PERSONAL_DATA_DB_HOST", "localhost"),
-        user=getenv("PERSONAL_DATA_DB_USERNAME", "root"),
-        password=getenv("PERSONAL_DATA_DB_PASSWORD", ""),
-        database=getenv("PERSONAL_DATA_DB_NAME", "")
+        host=os.getenv("PERSONAL_DATA_DB_HOST", "localhost"),
+        user=os.getenv("PERSONAL_DATA_DB_USERNAME", "root"),
+        password=os.getenv("PERSONAL_DATA_DB_PASSWORD", ""),
+        database=os.getenv("PERSONAL_DATA_DB_NAME", ""),
     )
     return connection
 
