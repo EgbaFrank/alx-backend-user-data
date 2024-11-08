@@ -4,7 +4,7 @@ replace a string with a given redaction string
 """
 from os import getenv
 import re
-from typing import List
+from typing import Sequence
 import logging
 import mysql.connector
 
@@ -12,7 +12,7 @@ PII_FIELDS = ("name", "email", "ssn", "phone", "password")
 
 
 def filter_datum(
-    fields: List[str],
+    fields: Sequence[str],
     redaction: str,
     message: str,
     separator: str
@@ -32,7 +32,7 @@ class RedactingFormatter(logging.Formatter):
     FORMAT = "[HOLBERTON] %(name)s %(levelname)s %(asctime)-15s: %(message)s"
     SEPARATOR = ";"
 
-    def __init__(self, fields):
+    def __init__(self, fields: Sequence[str]):
         super(RedactingFormatter, self).__init__(self.FORMAT)
         self.fields = fields
 
