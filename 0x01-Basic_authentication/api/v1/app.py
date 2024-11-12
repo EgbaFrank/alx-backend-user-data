@@ -25,7 +25,7 @@ elif getenv('AUTH_TYPE') == 'basic_auth':
 
 
 @app.before_request
-def filter():
+def filter() -> None:
     """Determines if a request require authentication"""
     if auth:
         ex = ['/api/v1/status/', '/api/v1/unauthorized/', '/api/v1/forbidden/']
