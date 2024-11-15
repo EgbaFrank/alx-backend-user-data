@@ -36,6 +36,7 @@ elif getenv('AUTH_TYPE') == 'session_exp_auth':
 elif getenv('AUTH_TYPE') == 'session_db_auth':
     auth = SessionDBAuth()
 
+
 @app.before_request
 def filter() -> None:
     """Determines if a request require authentication"""
