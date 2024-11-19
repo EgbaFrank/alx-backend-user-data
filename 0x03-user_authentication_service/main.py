@@ -25,6 +25,7 @@ def register_user(email: str, password: str) -> None:
     assert response.status_code == 400
     assert data == {"message": "email already registered"}
 
+
 def log_in_wrong_password(email: str, password: str) -> None:
     """Login in with wrong password check
     """
@@ -37,6 +38,7 @@ def log_in_wrong_password(email: str, password: str) -> None:
 
     assert response.status_code == 401
 
+
 def log_in(email: str, password: str) -> str:
     """Login checks"""
     url = "http://127.0.0.1:5000/sessions"
@@ -44,7 +46,7 @@ def log_in(email: str, password: str) -> str:
         "email": email,
         "password": password
     }
-    response = requests.post(url, data=payload) 
+    response = requests.post(url, data=payload)
     data = response.json()
 
     assert response.status_code == 200
@@ -52,12 +54,14 @@ def log_in(email: str, password: str) -> str:
 
     return response.cookies.get("session_id")
 
+
 def profile_unlogged() -> None:
     """Profile check when not logged"""
     url = "http://127.0.0.1:5000/profile"
     response = requests.get(url)
 
     assert response.status_code == 403
+
 
 def profile_logged(session_id: str) -> None:
     """Logged in profile check"""
@@ -70,13 +74,14 @@ def profile_logged(session_id: str) -> None:
 
     assert data == {"email": EMAIL}
 
+
 def log_out(session_id: str) -> None:
     """Logout checks"""
     url = "http://127.0.0.1:5000/sessions"
     response = requests.delete(url, cookies={"session_id": session_id})
 
     assert response.status_code == 200
-    assert response.json() == {"message":"Bienvenue"}
+    assert response.json() == {"message": "Bienvenue"}
 
 
 def reset_password_token(email: str) -> str:
@@ -96,6 +101,7 @@ def reset_password_token(email: str) -> str:
 
     return token
 
+
 def update_password(email: str, reset_token: str, new_password: str) -> None:
     """Reset password check"""
     url = "http://127.0.0.1:5000/reset_password"
@@ -109,8 +115,8 @@ def update_password(email: str, reset_token: str, new_password: str) -> None:
     data = response.json()
 
     assert response.status_code == 200
-
     assert data == {"email": email, "message": "Password updated"}
+
 
 EMAIL = "guillaume@holberton.io"
 PASSWD = "b4l0u"

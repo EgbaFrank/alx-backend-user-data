@@ -15,6 +15,7 @@ def home():
     """Welcome"""
     return jsonify({"message": "Bienvenue"})
 
+
 @app.route('/users', strict_slashes=False, methods=['POST'])
 def users():
     """Handle user authentication and registration
@@ -28,6 +29,7 @@ def users():
 
     except ValueError:
         return jsonify({"message": "email already registered"}), 400
+
 
 @app.route('/profile', strict_slashes=False)
 def profile():
@@ -43,6 +45,7 @@ def profile():
 
     return jsonify({"email": user.email})
 
+
 @app.route('/reset_password', strict_slashes=False, methods=['POST'])
 def get_reset_password_token():
     email = request.form.get("email")
@@ -56,6 +59,7 @@ def get_reset_password_token():
     except ValueError:
         abort(403)
 
+
 @app.route('/reset_password', strict_slashes=False, methods=['PUT'])
 def update_password():
     """updates a user's password"""
@@ -68,6 +72,7 @@ def update_password():
         return jsonify({"email": email, "message": "Password updated"})
     except ValueError:
         abort(403)
+
 
 @app.route('/sessions', strict_slashes=False, methods=['POST'])
 def login():
@@ -84,6 +89,7 @@ def login():
         return response
     else:
         abort(401)
+
 
 @app.route('/sessions', strict_slashes=False, methods=['DELETE'])
 def logout():
