@@ -67,6 +67,9 @@ def update_password():
     new_password = request.form.get("new_password")
     reset_token = request.form.get("reset_token")
 
+    if not email or not new_password or not reset_token:
+        abort(400, description="Missing required fields")
+
     try:
         AUTH.update_password(reset_token, new_password)
         return jsonify({"email": email, "message": "Password updated"})
